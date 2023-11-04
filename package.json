@@ -1,8 +1,9 @@
 {
   "name": "@dsnp/did-resolver",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "A DSNP DID resolver",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
     "build": "tsc",

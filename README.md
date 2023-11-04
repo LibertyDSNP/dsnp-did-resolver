@@ -10,12 +10,12 @@ This package follows the conventions described in the [`did-resolver`](https://g
 ## Usage for DSNP DID method only
 
 ```
-import { Resolver } from "did-resolver"
+import { Resolver } from "did-resolver";
 import dsnp from "@dsnp/did-resolver"; 
 import "dsnp-did-resolver-plugin-foo"; // See below for known plugins
 // ... additional dsnp-did-resolver plugins if needed
 
-const resolver = new Resolver(dsnpResolver.getResolver());
+const resolver = new Resolver(dsnp.getResolver());
 const myDid = "did:dsnp:123456";
 const result = await resolver.resolve(myDid);
 console.log(JSON.stringify(result, null, 2));
