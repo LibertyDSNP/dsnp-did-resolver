@@ -2,12 +2,13 @@
   "name": "@dsnp/did-resolver",
   "version": "0.0.0",
   "description": "A DSNP DID resolver",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "build": "npm run clean && tsc",
+    "postbuild": "npm run package",
+    "clean": "rm -Rf dist",
     "prepackage": "cp CONTRIBUTING.md README.md LICENSE ./dist",
+    "package": "node --no-warnings scripts/package.js",
     "test": "jest",
     "format": "tsc --noEmit --pretty && eslint --fix \"**/*.ts\"",
     "lint": "tsc --noEmit --pretty && eslint \"**/*.ts\""
