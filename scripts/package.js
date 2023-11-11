@@ -18,6 +18,7 @@ delete rootPackage["scripts"];
 delete rootPackage["devDependencies"];
 
 // Setup the main and types correctly
+rootPackage["main"] = "index.js";
 rootPackage["module"] = "./index.js";
 rootPackage["types"] = "index.d.ts";
 
