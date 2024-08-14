@@ -7,12 +7,8 @@ import {
   DIDDocument,
 } from "did-resolver";
 
-const dsnpResolvers: DSNPResolver[] = [];
-
-export type DSNPResolver = (dsnpUserId: bigint) => Promise<DIDDocument | null>;
-
-export function registerDSNPResolver(resolver: DSNPResolver) {
-  dsnpResolvers.push(resolver);
+export interface DSNPResolver {
+  resolve(dsnpUserId: bigint): Promise<DIDDocument | null>;
 }
 
 const notFoundResult: DIDResolutionResult = {
@@ -21,7 +17,7 @@ const notFoundResult: DIDResolutionResult = {
   didResolutionMetadata: { error: "notFound" },
 };
 
-export function getResolver() {
+export function getResolver(dsnpResolvers: DSNPResolver[]) {
   async function resolve(
     did: string,
     parsed: ParsedDID,
@@ -54,7 +50,7 @@ export function getResolver() {
 
     for (const dsnpResolver of dsnpResolvers) {
       try {
-        const output = await dsnpResolver(dsnpUserId);
+        const output = await dsnpResolver.resolve(dsnpUserId);
         if (output)
           return {
             didResolutionMetadata: { contentType: "application/did+ld+json" },

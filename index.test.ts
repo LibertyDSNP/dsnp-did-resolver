@@ -6,30 +6,31 @@ import {
   DIDResolutionOptions,
 } from "did-resolver";
 import { expect, jest, test } from "@jest/globals";
-import { DSNPResolver, getResolver, registerDSNPResolver } from "./index.js";
+import { DSNPResolver, getResolver } from "./index.js";
 
 const someDocument: DIDDocument = {
   id: "",
 };
 
-const plugin1: DSNPResolver = async (dsnpUserId: bigint) => {
-  if (dsnpUserId === 123456n) {
-    return someDocument;
-  } else {
-    return null;
+class Plugin1 implements DSNPResolver {
+  async resolve(dsnpUserId: bigint): Promise<DIDDocument | null> {
+    if (dsnpUserId === 123456n) {
+      return someDocument;
+    } else {
+      return null;
+    }
   }
-};
+}
 
-const plugin2: DSNPResolver = async (dsnpUserId: bigint) => {
-  if (dsnpUserId === 234567n) {
-    return someDocument;
-  } else {
-    return null;
+class Plugin2 implements DSNPResolver {
+  async resolve(dsnpUserId: bigint): Promise<DIDDocument | null> {
+    if (dsnpUserId === 234567n) {
+      return someDocument;
+    } else {
+      return null;
+    }
   }
-};
-
-registerDSNPResolver(plugin1);
-registerDSNPResolver(plugin2);
+}
 
 function errorResult(error: string): DIDResolutionResult {
   return {
@@ -61,7 +62,7 @@ describe("dsnp-did-resolver", () => {
   let resolver: GetResolverOutput;
 
   beforeAll(() => {
-    resolver = getResolver();
+    resolver = getResolver([new Plugin1(), new Plugin2()]);
   });
 
   async function doResolve(id: string) {
