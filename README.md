@@ -33,12 +33,13 @@ For example, if you also want to be able to resolve `did:web:*` DIDs, you can us
 import { CachedResolver } from "@digitalbazaar/did-io";
 import didWeb from "@digitalbazaar/did-method-web";
 import didDsnp from "@dsnp/did-resolver";
+import { FooResolver} from "dsnp-did-resolver-plugin-foo";
 
 const resolver = new CachedResolver();
 resolver.use(didWeb.driver());
 resolver.use(didDsnp.driver([ new FooResolver() ]));
 
-// usage is same as in previous example
+// DID resolution proceeds as in previous example
 ```
 
 # Plugins
@@ -60,7 +61,7 @@ export interface DSNPResolver {
 The `resolve()` function should return `null` if the DSNP User Id cannot be resolved to a DID document for any reason.
 Plugins should avoid throwing errors except in dire circumstances, as errors from one plugin will cause any further plugins that have been registered to *not* be called.
 
-`DSNPResolver` instances can be passed to the `CachedResolver` `use()` function.
+`DSNPResolver` instances are passed to this library's `driver()` method as shown above.
 
 ## Known plugins
 
