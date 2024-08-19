@@ -1,66 +1,32 @@
-import {
-  Resolver,
-  ParsedDID,
-  Resolvable,
-  DIDResolutionOptions,
-  DIDResolutionResult,
-  DIDDocument,
-} from "did-resolver";
-
-const dsnpResolvers: DSNPResolver[] = [];
-
-export type DSNPResolver = (dsnpUserId: bigint) => Promise<DIDDocument | null>;
-
-export function registerDSNPResolver(resolver: DSNPResolver) {
-  dsnpResolvers.push(resolver);
+export interface DSNPResolver {
+  resolve(dsnpUserId: bigint): Promise<object | null>;
 }
 
-const notFoundResult: DIDResolutionResult = {
-  didDocument: null,
-  didDocumentMetadata: {},
-  didResolutionMetadata: { error: "notFound" },
-};
+export function driver(dsnpResolvers: DSNPResolver[]) {
+  async function get(options: { did: string }): Promise<object> {
+    const did = options.did;
+    if (!did || !did.startsWith("did:dsnp:")) {
+      throw new Error("Not a valid DSNP DID");
+    }
+    const id = did.substring("did:dsnp:".length);
+    if (id === "") {
+      throw new Error("Missing DSNP User Id");
+    }
 
-export function getResolver() {
-  async function resolve(
-    did: string,
-    parsed: ParsedDID,
-    resolver: Resolvable,
-    options: DIDResolutionOptions,
-  ): Promise<DIDResolutionResult> {
-    if (parsed.id === "") {
-      return {
-        didDocument: null,
-        didDocumentMetadata: {},
-        didResolutionMetadata: { error: "invalidDid" },
-      };
-    }
-    if (parsed.method !== "dsnp") {
-      return {
-        didDocument: null,
-        didDocumentMetadata: {},
-        didResolutionMetadata: { error: "unsupportedDidMethod" },
-      };
-    }
     let dsnpUserId: bigint = 0n;
     try {
-      dsnpUserId = BigInt(parsed.id);
+      dsnpUserId = BigInt(id);
     } catch (e) {
-      return notFoundResult;
+      throw new Error("Could not parse DSNP User Id");
     }
     if (dsnpUserId < 0n || dsnpUserId >= 2n ** 64n) {
-      return notFoundResult;
+      throw new Error("DSNP User Id not in valid range");
     }
 
     for (const dsnpResolver of dsnpResolvers) {
       try {
-        const output = await dsnpResolver(dsnpUserId);
-        if (output)
-          return {
-            didResolutionMetadata: { contentType: "application/did+ld+json" },
-            didDocument: output,
-            didDocumentMetadata: {},
-          };
+        const output = await dsnpResolver.resolve(dsnpUserId);
+        if (output) return output;
       } catch (cause) {
         throw new Error(`Error resolving DSNP User Id ${dsnpUserId}`, {
           cause,
@@ -68,8 +34,19 @@ export function getResolver() {
       }
     }
 
-    return notFoundResult;
+    throw new Error("DSNP User Id not found");
   }
 
-  return { dsnp: resolve };
+  if (!dsnpResolvers || dsnpResolvers.length === 0)
+    throw new Error("Must provide at least one DSNPResolver");
+
+  return {
+    method: "dsnp",
+    get,
+    generate: () => {
+      throw new Error("generate() is not implemented");
+    },
+  };
 }
+
+export default { driver };
