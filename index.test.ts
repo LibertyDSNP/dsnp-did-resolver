@@ -1,4 +1,3 @@
-import { expect } from "@jest/globals";
 import { driver } from "./index.js";
 import { CachedResolver } from "@digitalbazaar/did-io";
 
