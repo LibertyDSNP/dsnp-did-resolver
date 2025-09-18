@@ -1,6 +1,5 @@
 {
   "name": "@dsnp/did-resolver",
-  "version": "0.0.0",
   "description": "A DSNP DID resolver",
   "type": "module",
   "scripts": {
