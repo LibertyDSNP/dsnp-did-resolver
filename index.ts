@@ -16,7 +16,7 @@ export function driver(dsnpResolvers: DSNPResolver[]) {
     let dsnpUserId: bigint = 0n;
     try {
       dsnpUserId = BigInt(id);
-    } catch (e) {
+    } catch (_e) {
       throw new Error("Could not parse DSNP User Id");
     }
     if (dsnpUserId < 0n || dsnpUserId >= 2n ** 64n) {

@@ -1,4 +1,3 @@
-import { expect, jest, test } from "@jest/globals";
 import { driver } from "./index.js";
 import { CachedResolver } from "@digitalbazaar/did-io";
 
@@ -49,7 +48,7 @@ describe("dsnp-did-resolver", () => {
 
   it("rejects non-DSNP DIDs", async () => {
     const did = "did:xyz:123";
-    const output = await expect(resolver.get({ did })).rejects.toThrow();
+    await expect(resolver.get({ did })).rejects.toThrow();
   });
 
   it("rejects invalid DSNP User Ids", async () => {
