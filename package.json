@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/LibertyDSNP/dsnp-did-resolver#readme",
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "8.44.0",
+    "@typescript-eslint/eslint-plugin": "8.46.2",
     "@typescript-eslint/parser": "8.44.0",
     "eslint": "9.35.0",
     "eslint-config-prettier": "10.1.8",
